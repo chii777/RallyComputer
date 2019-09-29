@@ -41,11 +41,99 @@
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define _XTAL_FREQ 8000000
 
 /*
  * 
  */
-int main(int argc, char** argv) {
+
+void PICinit()
+{
+    OSCFRQbits.HFFRQ = 0b0011; //8MHz
+    ANSELA  = 0b00000000; // AN?????
+    TRISA   = 0b00000000; // set all of RA pins output
+    TRISC   = 0b00000000; // set all of RC pins output
+    PORTA   = 0b00000000; // All of RA pins set LOW
+    PORTC   = 0b00000000; // All of RC pins set LOW
+    return;
+}
+
+void printNumber(int num)
+{
+    if (num == 0)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000100; // ? ? TRISA5 TRISA4 ? TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00000000; // ? ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 1)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000100; // ? ? TRISA5 TRISA4 ? TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00110110; // ? ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 2)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00010000; // ? ? TRISA5 TRISA4 ? TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00000100; // ? ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 3)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000000; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00100100; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 4)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000000; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00110010; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 5)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00100000; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00100000; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 6)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00100000; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00000000; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 7)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000100; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00110100; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 8)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000000; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00000000; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+    else if (num == 9)
+    {// 1st_bit: RA1, 2nd_bit:RA0, A:RC1, B:RA5, C:RA4, D:RC4, E:RC5, F:RC2, G:RA2
+        PORTA   = 0b00000000; // ? ? TRISA5 TRISA4    ?   TRISA2 TRISA1 TRISA0
+        PORTC   = 0b00100000; // ? ? TRISC5 TRISC4 TRISC3 TRISC2 TRISC1 TRISC0
+    }
+}
+
+void setNum(int first, int second)
+{
+    printNumber(first);
+    RA0=1;
+    printNumber(second);
+    RA1=1;
+}
+
+int main(int argc, char** argv) 
+{
+    PICinit();      //init PIC
+    
+    int i = 0;
+    while(1)
+    {
+        for (int k=0; k<200; k++)
+        {
+            setNum(i/10%10, i%10);
+        }
+        i++;
+    }
+    setNum(0, 0);    
 
     return (EXIT_SUCCESS);
 }
